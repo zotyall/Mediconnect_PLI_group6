@@ -76,3 +76,62 @@ def pick_from_list(options, prompt):
         if choice.isdigit() and 1 <= int(choice) <= len(options):
             return options[int(choice) - 1]
         print("  Invalid choice. Try again.")
+
+
+# ════════════════════════════════════════════════════════
+#  REGISTER & LOGIN
+# ════════════════════════════════════════════════════════
+
+def register():
+    divider()
+    print("CREATE A NEW ACCOUNT")
+    divider()
+
+    users = load_data(USERS_FILE)
+
+    username = input("Choose a username: ").strip()
+    if not username:
+        print("Username cannot be empty.")
+        return
+    if username in users:
+        print("That username is already taken. Please try another.")
+        return
+
+    password = input("Choose a password: ").strip()
+    if len(password) < 4:
+        print("Password must be at least 4 characters.")
+        return
+    if password != input("Confirm your password: ").strip():
+        print("Passwords do not match.")
+        return
+
+    users[username] = {"password": hash_password(password)}
+    save_data(USERS_FILE, users)
+
+    print(f"\nAccount created successfully! Welcome, {username}.")
+    wait()
+
+
+def login():
+    divider()
+    print("LOGIN")
+    divider()
+
+    users = load_data(USERS_FILE)
+
+    username = input("Username: ").strip()
+    password = input("Password: ").strip()
+
+    if username not in users:
+        print("Username not found. Please register first.")
+        wait()
+        return None
+
+    if users[username]["password"] != hash_password(password):
+        print("Wrong password. Please try again.")
+        wait()
+        return None
+
+    print(f"\nLogged in successfully! Welcome, {username}.")
+    return username
+    
